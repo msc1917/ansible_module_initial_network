@@ -1,0 +1,4 @@
+---
+- name: Setup Network Mounts
+  include_tasks: mount/mount_filesystems.yml
+  when: do_mount_filesystems

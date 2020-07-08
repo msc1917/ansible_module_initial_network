@@ -1,0 +1,36 @@
+hardware: []
+
+software:
+  - git
+
+services:
+  - ssh
+  - avahi
+
+enviroment:
+  gui_system: false
+
+development:
+  get_git_repositories: true
+  repository_baikonur: true
+
+hostfile: 
+  create: true
+  full: false
+
+kernel:
+  kernel_modules: true
+
+ml_engines: []
+
+xrdp:
+  name: "xrdp_session"
+  password: "ask"
+  title: "Baikonur-Networks"
+  ip_address: "127.0.0.1"
+  port: "-1"
+
+secure_ssh_config: false
+do_mount_filesystems: true
+do_software_upgrade: true
+do_ansible: false

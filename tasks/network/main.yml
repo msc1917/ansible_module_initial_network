@@ -1,0 +1,7 @@
+- name: Setup Network
+  include_tasks: network/network_default.yml
+
+- name: Setup Wireless LAN
+  include_tasks: network/network_wireless.yml
+  when:
+    - ("wlan_5ghz" in hardware) or ("wlan_24ghz" in hardware)

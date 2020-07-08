@@ -1,0 +1,11 @@
+---
+- name: Generiere /etc/wpa_supplicant/wpa_supplicant.conf
+  template:
+    src: "network/wpa_supplicant.conf.j2"
+    dest: "/etc/wpa_supplicant/wpa_supplicant.conf"
+    owner: root
+    group: root
+    mode: '0600'
+  become: yes
+  when: 
+    - ("wlan_5ghz" in hardware) or ("wlan_24ghz" in hardware)

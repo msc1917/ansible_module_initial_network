@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+auto eth0:1
+allow-hotplug eth0:1
+	iface eth0:1 inet static
+	address {{ serveNet_ip }}
+	gateway {{ network.gateway }}
+	netmask 255.255.0.0
+	

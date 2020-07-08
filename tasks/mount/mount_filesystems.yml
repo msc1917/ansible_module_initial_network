@@ -1,0 +1,46 @@
+---
+- name: Install Software packages for mount
+  apt:
+    name: [ cifs-utils, nfs-common ]
+    state: present
+    update_cache: no
+  become: yes
+
+- name: Unmount remote-filesystem
+  mount:
+    path: "{{ item.mountpoint }}"
+    src: "{{ item.remote }}"
+    fstype: "{{ item.type }}"
+    opts: "{{ item.options }}"
+    state: unmounted
+  become: yes
+  when: do_mount_filesystems
+  ignore_errors: yes
+  with_items:
+    - "{{ mount_filesystems }}"
+
+- name: Generate Directory Structure for Network-Mounts
+  file:
+    path: "{{ item.mountpoint }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: yes
+  when: do_mount_filesystems
+  with_items:
+    - "{{ mount_filesystems }}"
+
+- name: Mount remote-filesystem
+  mount:
+    path: "{{ item.mountpoint }}"
+    src: "{{ item.remote }}"
+    fstype: "{{ item.type }}"
+    opts: "{{ item.options }}"
+    state: present
+    # state: "{% if item['name'] in mounted_filesystems %}mounted{% else %}present{% endif %}"
+  become: yes
+  when: do_mount_filesystems
+  ignore_errors: yes
+  with_items:
+    - "{{ mount_filesystems }}"

@@ -1,0 +1,2 @@
+# {{ ansible_managed }}
+ip address add {{ serveNet_ip }}/{{ subnet.serveNet.ip_range | regex_replace('^(?P<ip_address>.+)/(?P<netmask>\\d+)$', '\\g<netmask>') }} dev eth0:1

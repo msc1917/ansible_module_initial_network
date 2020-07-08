@@ -1,0 +1,44 @@
+---
+- name: Install default network-packages
+  apt:
+    name: [ 'vlan' ]
+    state: present
+    update_cache: no
+  become: yes
+
+- name: Delete Cloud-Init network-configuration-file
+  file:
+    path: "{{ item }}"
+    state: absent
+  become: yes
+  with_items:
+    - /etc/network/interfaces.d/50-cloud-init.cfg
+
+- name: Generiere /etc/network/interfaces.d/30-ansible.cfg
+  template:
+    src: "network/30-ansible.cfg.j2"
+    dest: "/etc/network/interfaces.d/30-ansible.cfg"
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+- name: Generiere /etc/network/interfaces.d/35-serveNet-ansible.cfg
+  template:
+    src: "network/35-serveNet-ansible.cfg.j2"
+    dest: "/etc/network/interfaces.d/35-serveNet-ansible.cfg"
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+  when: serveNet_ip is defined
+
+- name: Generiere /etc/dhcpcd.exit-hook
+  template:
+    src: "network/dhcpcd.exit-hook.j2"
+    dest: "/etc/dhcpcd.exit-hook"
+    owner: root
+    group: root
+    mode: '0744'
+  become: yes
+  when: serveNet_ip is defined

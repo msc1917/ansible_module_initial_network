@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=AT
+
+{% for item in wlan %} 
+{% if ("wlan_5ghz" in hardware and wlan[item]["band"] == "5ghz") or wlan[item]["band"] == "24ghz" %} network={
+  ssid="{{ wlan[item]["ssid"] }}"
+  psk="{{ wlan[item]["psk"] }}"
+} {% endif %}
+{% endfor %}
