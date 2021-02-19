@@ -1,0 +1,7 @@
+---
+dependencies:
+  - role: setenv_apt-proxy
+  - role: setenv_basesetup-defaults
+  - role: setenv_basesetup-hostname
+  - role: setenv_basesetup-hostfile
+  - role: user_admin-user
