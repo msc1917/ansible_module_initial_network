@@ -25,28 +25,27 @@ function getIP {
 	}
 
 function leadingDevice {
-	if [ "${ipLAN}" != "DOWN" -o "${ipLAN}" != "MISSING" ]
-	then
-		echo "LAN"
-	elif [ "${ipWLAN}" != "DOWN" -o "${ipWLAN}" != "MISSING" ]
-	then
-		echo "WLAN"
-	else
-		echo "NONE"
-		# exit 0
-	fi
+	returnString="NONE"
+	for device in WLAN LAN;
+	do
+		eval netDev=\"\$dev${device}\"
+		eval netIP=\"\$ip${device}\"
+
+		if [ "${netIP}" != "DOWN" -o "${netIP}" != "MISSING" ]
+		then
+			returnString="${device}"
+		fi
+	done
+	echo "${returnString}"
 	}
 
 function leadingDeviceName {
-	if [ "${devActive}" = "LAN" ]
+	if [ "${devActive}" = "LAN" -o "${devActive}" = "WLAN" ]
 	then
-		echo "${devLAN}"
-	elif [ "${devActive}" = "WLAN" ]
-	then
-		echo "${devWLAN}"
+		eval netDev=\"\$dev${device}\"
+		echo "${netDev}"
 	else
 		echo "NONE"
-		# exit 0
 	fi
 	}
 
@@ -55,8 +54,8 @@ function delActiveGlobal {
 	do
 		if [ "${devActive}" != "${device}" ]
 		then
-			eval netDev=\"\$dev${test}\"
-			eval netIP=\"\$ip${test}\"
+			eval netDev=\"\$dev${device}\"
+			eval netIP=\"\$ip${device}\"
 			if echo "netIP" | grep -q "${ipFull}"
 			then
 				echo "ip address del ${ipFull} dev $(netDev)"
@@ -66,20 +65,14 @@ function delActiveGlobal {
 	}
 
 function getLastOctett {
-	if [ "${devActive}" = "LAN" ]
-	then
-		echo "${ipLAN}" | grep "^${ipLAN_prefix}" | cut -f 4 -d "." 
-	elif [ "${devActive}" = "WLAN" ]
-	then
-		echo "${ipWLAN}" | grep "^${ipWLAN_prefix}" | cut -f 4 -d "." 
-	else
-		# exit 0
-	fi
+	eval net_prefix=\"\$ip${devActive}_prefix\"
+	eval netIP=\"\$ip${devActive}\"
+	echo "getLastOctett: ${devActive}"
+	echo "${netIP}" | grep "^${net_prefix}" | cut -f 4 -d "." 
 	}
 
 devList="$(getDev)"
 devActive=$(leadingDevice)
-
 ipLAN="$(getIP ${devLAN})"
 ipWLAN="$(getIP ${devWLAN})"
 
@@ -89,6 +82,12 @@ then
 else
 	ipFull="${ipGlobal_prefix}$(getLastOctett)"
 fi
+
+echo "devList: ${devList}" >&2
+echo "devActive: ${devActive}" >&2
+echo "ipLAN: ${ipLAN}" >&2
+echo "ipWLAN: ${ipWLAN}" >&2
+echo "ipFull: ${ipFull}" >&2
 
 devLANcount=1
 devWLANcount=1
