@@ -33,6 +33,16 @@
   become: yes
   when: serveNet_ip is defined
 
+- name: Generiere /usr/local/bin/assigh_additional_ipaddress.sh
+  template:
+    src: "network/assign_additional_ipaddress.sh.j2"
+    dest: "/usr/local/bin/assign_additional_ipaddress.sh"
+    owner: root
+    group: root
+    mode: '0755'
+  become: yes
+  when: ("wlan_5ghz" in hardware) or ("wlan_24ghz" in hardware)
+
 - name: Generiere /etc/dhcpcd.exit-hook
   template:
     src: "network/dhcpcd.exit-hook.j2"
@@ -42,3 +52,29 @@
     mode: '0744'
   become: yes
   when: ("wlan_5ghz" in hardware) or ("wlan_24ghz" in hardware)
+
+# - name: Delete /etc/dhcpcd.exit-hook
+#   file:
+#     path: "{{ item }}"
+#     state: absent
+#   become: yes
+#   with_items:
+#     - /etc/dhcpcd.exit-hook
+
+# - name: Generiere /etc/dhcpcd.enter-hook
+#   template:
+#     src: "network/dhcpcd.enter-hook.j2"
+#     dest: "/etc/dhcpcd.enter-hook"
+#     owner: root
+#     group: root
+#     mode: '0744'
+#   become: yes
+#   when: ("wlan_5ghz" in hardware) or ("wlan_24ghz" in hardware)
+
+- name: Delete /etc/dhcpcd.enter-hook
+  file:
+    path: "{{ item }}"
+    state: absent
+  become: yes
+  with_items:
+    - /etc/dhcpcd.enter-hook
