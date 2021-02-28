@@ -53,24 +53,6 @@
   become: yes
   when: ("wlan_5ghz" in hardware) or ("wlan_24ghz" in hardware)
 
-# - name: Delete /etc/dhcpcd.exit-hook
-#   file:
-#     path: "{{ item }}"
-#     state: absent
-#   become: yes
-#   with_items:
-#     - /etc/dhcpcd.exit-hook
-
-# - name: Generiere /etc/dhcpcd.enter-hook
-#   template:
-#     src: "network/dhcpcd.enter-hook.j2"
-#     dest: "/etc/dhcpcd.enter-hook"
-#     owner: root
-#     group: root
-#     mode: '0744'
-#   become: yes
-#   when: ("wlan_5ghz" in hardware) or ("wlan_24ghz" in hardware)
-
 - name: Delete /etc/dhcpcd.enter-hook
   file:
     path: "{{ item }}"
